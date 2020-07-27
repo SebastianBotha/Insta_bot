@@ -1,5 +1,5 @@
-
 import datetime
+from time import sleep
 from datetime import timedelta
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -8,9 +8,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.keys import Keys
-
+from selenium.common.exceptions import NoSuchElementException
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.color import Color
+import pandas as pd
 
 # driver = webdriver.Safari()
 driver = webdriver.Chrome()
@@ -23,6 +25,23 @@ chrome_options.add_argument("--incognito")
 
 delay = 3  # seconds
 
+
+# ============== FUNCTIONS ===================================
+
+def scroll_wheel(direction, num_scrol):
+    scrol_index = 1
+    if direction == "down":
+        while scrol_index < num_scrol:
+            driver.find_element_by_tag_name('body').send_keys(Keys.DOWN)  # send_keys(Keys.DOWN)
+            scrol_index += 1
+
+def get_text_xpath(xpath):
+    #xpath_table = '//*[@id="react-root"]/section/main/section/div/div[3]/div/article[' + str(column_index) + ']/header/div[2]/div[1]/div/span/a'
+    celltext = driver.find_element_by_xpath(xpath)
+    top_cell = celltext.text
+    return top_cell
+
+
 # =============== GO TO INSTA ================================
 the_url = "https://www.instagram.com"
 driver.get(the_url)
@@ -30,7 +49,7 @@ driver.get(the_url)
 my_new_el = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.XPATH, '//*[@id="react-root"]/section/main/article/div[2]/div[1]/div/form/div[2]/div/label/input')))
 print("Page is ready!")
 
-# =============== LOGIN ================================
+# =============== LOGIN =========================================
 
 
 #driver.implicitly_wait(5)
@@ -69,34 +88,40 @@ sort_element = driver.find_element_by_xpath(notification_not_now)
 print("clicking button not now ")
 sort_element.click()
 
-# ====== Now get names of posters =======
 
-# tracker of elemnts on page
+# ===================== go to specif account ==========================
 
-column_index = 1
+search_box = driver.find_element_by_xpath("//input[@placeholder='Search']")
+search_box.send_keys('sebastian_botha')
+sleep(2)
+driver.find_element_by_xpath('//*[@id="react-root"]/section/nav/div[2]/div/div/div[2]/div[3]/div[2]/div/a[1]').click()
 
-list_of_profiles = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]
+# ==================== Find first picture ============================
+my_new_el = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.XPATH, '//*[@id="react-root"]/section/main/div/div[3]/article/div[1]/div/div[1]/div[1]')))
+first_image = driver.find_element_by_xpath('//*[@id="react-root"]/section/main/div/div[3]/article/div[1]/div/div[1]/div[1]').click()
 
-#Scroll down
+# ================= Find the like button ============
+# my_new_el = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[4]/div[2]/div/article/div[2]/div/div[1]/div[2]/div/div/div/ul/li[2]/div/div/div/div[2]')))
+sleep(1)
+print('wait to load like')
+my_new_el = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[4]/div[2]/div/article/div[3]/section[1]/span[1]/button')))
+#a = driver.find_element_by_xpath('/html/body/div[4]/div[2]/div/article/div[3]/section[1]/span[1]/button').click()
+
+
+Like_button_xpath = "//article//section//button//*[@aria-label='Like']"
+
+try:
+    driver.find_element_by_xpath(Like_button_xpath).click()
+except NoSuchElementException:
+    print("already liked")
+
+sleep(1)
 
 
 
-# get first 10 posts names
-while column_index <= 3:
+sleep(5)
+driver.quit()
+exit()
 
-    # Use xpath for posts but increment article number by 1
-    xpath_table = '//*[@id="react-root"]/section/main/section/div/div[3]/div/article[' + str(column_index) + ']/header/div[2]/div[1]/div/span/a'
-    celltext = driver.find_element_by_xpath(xpath_table)
-    top_cell = celltext.text
-    list_of_profiles[column_index-1] = top_cell
-    column_index += 1
-    print(column_index)
-
-scrol_index = 1
-while scrol_index < 20:
-    driver.find_element_by_tag_name('body').send_keys(Keys.DOWN)  # send_keys(Keys.DOWN)
-    scrol_index += 1
-
-print("posts", list_of_profiles)
 
 
