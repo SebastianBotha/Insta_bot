@@ -14,6 +14,24 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.color import Color
 import pandas as pd
 
+friends_list = ["sebastian_botha", "mkbhd", "caseyneistat"]
+
+
+
+
+exit()
+
+
+
+
+
+
+
+
+
+
+
+
 driver = webdriver.Chrome()
 
 # instantiate a chrome options object so you can set the size and headless preference
@@ -22,10 +40,7 @@ chrome_options = Options()
 chrome_options.add_argument("--window-size=1920x1080")
 chrome_options.add_argument("--incognito")
 
-def wait_for_web_load(xpath):
-    delay = 3  # seconds
-    wait_func = WebDriverWait(driver, delay).until(EC.presence_of_element_located(
-        (By.XPATH, xpath)))
+
 
 driver.get('https://www.accuweather.com/en/za/johannesburg/305448/daily-weather-forecast/305448')
 
@@ -48,8 +63,6 @@ date_range = driver.find_element_by_xpath(date_x_short).text
 print("x_short", date_x_short)
 
 info_x_short = "//div[@class='daily-wrapper'][3]/a/div[@class='info']"
-
-"//button[contains(text(),"Like")]"
 
 info_x_short = driver.find_element_by_xpath(info_x_short).text
 

@@ -13,20 +13,58 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.color import Color
 import pandas as pd
+import random
 
-# driver = webdriver.Safari()
+# ========================= INIT DRIVER ============================================
 driver = webdriver.Chrome()
-
-# instantiate a chrome options object so you can set the size and headless preference
 chrome_options = Options()
 # chrome_options.add_argument("--headless")
 chrome_options.add_argument("--window-size=1920x1080")
 chrome_options.add_argument("--incognito")
 
-delay = 3  # seconds
+# ======================= LOGIN DETAILS ==========================================
+username_instagram = "python_script1"
+password_instagram = "gynboJ-cyhger-vorco6"
+friends_list = ["sebastian_botha", "mkbhd", "caseyneistat", "chrishemsworth", "lewishamilton", "instagram", "mrfruitgaming", "secretcapetown", "secretjoburg" ]
 
 
-# ============== FUNCTIONS ===================================
+
+def Login_instagram(username, password):
+    driver.get("https://www.instagram.com")
+    # WAIT FOR INSTA
+    wait_for_web_load('//*[@id="react-root"]/section/main/article/div[2]/div[1]/div/form/div[2]/div/label/input')
+
+    # Click on user input field
+    driver.find_element_by_xpath(
+        '//*[@id="react-root"]/section/main/article/div[2]/div[1]/div/form/div[2]/div/label/input').click()
+
+    # enter username
+    driver.find_element_by_xpath(
+        '//*[@id="react-root"]/section/main/article/div[2]/div[1]/div/form/div[2]/div/label/input').send_keys(username)
+
+    # eneter password
+    driver.find_element_by_xpath(
+        '//*[@id="react-root"]/section/main/article/div[2]/div[1]/div/form/div[3]/div/label/input').click()
+    driver.find_element_by_xpath(
+        '//*[@id="react-root"]/section/main/article/div[2]/div[1]/div/form/div[3]/div/label/input').send_keys(password)
+
+    # login
+    driver.find_element_by_xpath('//*[@id="react-root"]/section/main/article/div[2]/div[1]/div/form/div[4]').click()
+
+    # wait for next page that asks if you want to save login details
+    wait_for_web_load('//*[@id="react-root"]/section/main/div/div/div/div/button')
+    driver.find_element_by_xpath('//*[@id="react-root"]/section/main/div/div/div/div/button').click()
+
+    # wait for next page that asks to turn on notificvations
+    wait_for_web_load('/html/body/div[4]/div/div/div/div[3]/button[2]')
+    driver.find_element_by_xpath('/html/body/div[4]/div/div/div/div[3]/button[2]').click()
+
+
+def wait_for_web_load(xpath):
+    delay = 3  # seconds
+    wait_func = WebDriverWait(driver, delay).until(EC.presence_of_element_located(
+        (By.XPATH, xpath)))
+
 
 def scroll_wheel(direction, num_scrol):
     scrol_index = 1
@@ -35,93 +73,66 @@ def scroll_wheel(direction, num_scrol):
             driver.find_element_by_tag_name('body').send_keys(Keys.DOWN)  # send_keys(Keys.DOWN)
             scrol_index += 1
 
+
 def get_text_xpath(xpath):
-    #xpath_table = '//*[@id="react-root"]/section/main/section/div/div[3]/div/article[' + str(column_index) + ']/header/div[2]/div[1]/div/span/a'
     celltext = driver.find_element_by_xpath(xpath)
     top_cell = celltext.text
     return top_cell
 
-
-# =============== GO TO INSTA ================================
-the_url = "https://www.instagram.com"
-driver.get(the_url)
-# WAIT FOR INSTA
-my_new_el = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.XPATH, '//*[@id="react-root"]/section/main/article/div[2]/div[1]/div/form/div[2]/div/label/input')))
-print("Page is ready!")
-
-# =============== LOGIN =========================================
+def random_sleep(min, max):
+    sleep(random.randint(min, max))
 
 
-#driver.implicitly_wait(5)
+# ===================================================================================================================
+# ============================                     MAIN                  ============================================
+# ===================================================================================================================
 
-username_path = '//*[@id="react-root"]/section/main/article/div[2]/div[1]/div/form/div[2]/div/label/input'
-sort_element = driver.find_element_by_xpath(username_path)
-sort_element.click()
-driver.find_element_by_xpath(username_path).send_keys("python_script1")
+Login_instagram(username_instagram, password_instagram)
 
-password_path = '//*[@id="react-root"]/section/main/article/div[2]/div[1]/div/form/div[3]/div/label/input'
-sort_element = driver.find_element_by_xpath(password_path)
-sort_element.click()
-driver.find_element_by_xpath(password_path).send_keys("gynboJ-cyhger-vorco6")
-
-login_button = '//*[@id="react-root"]/section/main/article/div[2]/div[1]/div/form/div[4]'
-sort_element = driver.find_element_by_xpath(login_button)
-sort_element.click()
-print("Clicked next page")
-
-# wait for next page that asks if you want to save login details
-my_new_el = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.XPATH, '//*[@id="react-root"]/section/main/div/div/div/div/button')))
-not_now_login = '//*[@id="react-root"]/section/main/div/div/div/div/button'
-print("finding button")
-sort_element = driver.find_element_by_xpath(not_now_login)
-print("clicking button")
-sort_element.click()
-print("clicked")
+for x in range(random.randint(10,20)):
+    random.shuffle(friends_list)
 
 
+for x in range(len(friends_list)):
+    print(friends_list[x])
 
-# wait for next page that asks to turn on notificvations
-my_new_el = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[4]/div/div/div/div[3]/button[2]')))
-notification_not_now = '/html/body/div[4]/div/div/div/div[3]/button[2]'
-print("finding not now button")
-sort_element = driver.find_element_by_xpath(notification_not_now)
-print("clicking button not now ")
-sort_element.click()
+    #search for friend
+    random_sleep(1,3)
+    search_box = driver.find_element_by_xpath("//input[@placeholder='Search']")
+    search_box.send_keys(friends_list[x])
+    random_sleep(1,2)
+    driver.find_element_by_xpath('//*[@id="react-root"]/section/nav/div[2]/div/div/div[2]/div[3]/div[2]/div/a[1]').click()
 
-
-# ===================== go to specif account ==========================
-
-search_box = driver.find_element_by_xpath("//input[@placeholder='Search']")
-search_box.send_keys('sebastian_botha')
-sleep(2)
-driver.find_element_by_xpath('//*[@id="react-root"]/section/nav/div[2]/div/div/div[2]/div[3]/div[2]/div/a[1]').click()
-
-# ==================== Find first picture ============================
-my_new_el = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.XPATH, '//*[@id="react-root"]/section/main/div/div[3]/article/div[1]/div/div[1]/div[1]')))
-first_image = driver.find_element_by_xpath('//*[@id="react-root"]/section/main/div/div[3]/article/div[1]/div/div[1]/div[1]').click()
-
-# ================= Find the like button ============
-# my_new_el = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[4]/div[2]/div/article/div[2]/div/div[1]/div[2]/div/div/div/ul/li[2]/div/div/div/div[2]')))
-sleep(1)
-print('wait to load like')
-my_new_el = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[4]/div[2]/div/article/div[3]/section[1]/span[1]/button')))
-#a = driver.find_element_by_xpath('/html/body/div[4]/div[2]/div/article/div[3]/section[1]/span[1]/button').click()
+    # find first image
+    # ==================== Find first picture ============================
+    random_sleep(2, 4)
+    wait_for_web_load("//body//div[contains(@class,'_2z6nI')]//div//div//div[1]//div[1]//a[1]//div[1]//div[2]")
+    first_image = driver.find_element_by_xpath("//body//div[contains(@class,'_2z6nI')]//div//div//div[1]//div[1]//a[1]//div[1]//div[2]").click()
 
 
-Like_button_xpath = "//article//section//button//*[@aria-label='Like']"
+    # find like button
+    random_sleep(2, 5)
+    #wait_for_web_load('/html/body/div[4]/div[2]/div/article/div[3]/section[1]/span[1]/button')
+    Like_button_xpath = "//article//section//button//*[@aria-label='Like']"
+    random_sleep(2, 5)
+    try:
+        driver.find_element_by_xpath(Like_button_xpath).click()
+    except NoSuchElementException:
+        print("already liked")
 
-try:
-    driver.find_element_by_xpath(Like_button_xpath).click()
-except NoSuchElementException:
-    print("already liked")
+    random_sleep(3,6)
 
-sleep(1)
+    # return home
+    print("exit")
+
+    close_button_xpath = "//html/body/div[4]/div[3]/button"
+    driver.find_element_by_xpath(close_button_xpath).click()
+    print("home")
+    home_xpath ='//*[@id="react-root"]/section/nav/div[2]/div/div/div[1]/a/div'
+    driver.find_element_by_xpath(home_xpath).click()
+    print("done")
+    random_sleep(3, 6)
 
 
-
-sleep(5)
 driver.quit()
 exit()
-
-
-
